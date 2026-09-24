@@ -1,96 +1,139 @@
 import { useState } from "react";
 import {
+  Activity,
+  AlertTriangle,
+  Database,
   FileSearch,
-  LayoutDashboard,
   Network,
   ShieldAlert,
 } from "lucide-react";
 
-import Dashboard from "./pages/Dashboard";
-import CaseInvestigation from "./pages/CaseInvestigation";
 import GraphExplorer from "./components/GraphExplorer";
 
-type Page = "dashboard" | "investigate" | "graph";
+type Page = "investigate" | "graph";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>("dashboard");
-  const [selectedCaseId, setSelectedCaseId] = useState<string>("HHG-001");
+  const [currentPage, setCurrentPage] =
+    useState<Page>("investigate");
 
-  const handleSelectCaseFromDashboard = (caseId: string, targetPage: "investigate" | "graph") => {
-    setSelectedCaseId(caseId);
-    setCurrentPage(targetPage);
+  const [caseId] = useState("CASE-001");
+
+  const handleInvestigate = () => {
+    setCurrentPage("investigate");
+  };
+
+  const handleGraphExplorer = () => {
+    console.log("GRAPH CLICKED");
+    setCurrentPage("graph");
   };
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand" onClick={() => setCurrentPage("dashboard")} style={{ cursor: "pointer" }}>
+        <div className="brand">
           <div className="brand-icon">
             <ShieldAlert size={22} />
           </div>
 
           <div>
             <strong>TigerGraphAI</strong>
-            <span>Fraud Agent</span>
+            <span>Fraud Investigation</span>
           </div>
         </div>
 
-        <div className="nav-label">COMMAND CENTER</div>
+        <div className="nav-label">INVESTIGATION</div>
 
         <button
-          className={`nav-item ${currentPage === "dashboard" ? "active" : ""}`}
-          onClick={() => setCurrentPage("dashboard")}
-        >
-          <LayoutDashboard size={18} />
-          Dashboard
-        </button>
-
-        <button
-          className={`nav-item ${currentPage === "investigate" ? "active" : ""}`}
-          onClick={() => setCurrentPage("investigate")}
+          className={`nav-item ${
+            currentPage === "investigate" ? "active" : ""
+          }`}
+          onClick={handleInvestigate}
         >
           <FileSearch size={18} />
-          Investigation Console
+          Investigate
         </button>
 
         <button
-          className={`nav-item ${currentPage === "graph" ? "active" : ""}`}
-          onClick={() => setCurrentPage("graph")}
+          className="nav-item"
+          onClick={() => console.log("CASES CLICKED")}
+        >
+          <Database size={18} />
+          Cases
+        </button>
+
+        <button
+          className={`nav-item ${
+            currentPage === "graph" ? "active" : ""
+          }`}
+          onClick={handleGraphExplorer}
         >
           <Network size={18} />
           Graph Explorer
         </button>
 
-        <div className="nav-label second">SUBMISSION</div>
+        <div className="nav-label second">SYSTEM</div>
 
-        <div style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", color: "#94a3b8" }}>
-          <div><strong>Case Pack:</strong> 20 / 20</div>
-          <div><strong>Folder:</strong> cases/</div>
-          <div style={{ marginTop: "0.25rem", color: "#10b981", fontWeight: 600 }}>✓ All Validated</div>
-        </div>
+        <button
+          className="nav-item"
+          onClick={() => console.log("SYSTEM STATUS CLICKED")}
+        >
+          <Activity size={18} />
+          System Status
+        </button>
       </aside>
 
-      <main className="main-content" style={{ overflowY: "auto", height: "100vh", backgroundColor: "#f8fafc" }}>
-        {currentPage === "dashboard" && (
-          <Dashboard onSelectCase={handleSelectCaseFromDashboard} />
-        )}
+      <main className="main-content">
+        {currentPage === "graph" ? (
+          <GraphExplorer caseId={caseId} />
+        ) : (
+          <section className="panel">
+            <div className="panel-heading">
+              <div>
+                <span className="eyebrow">
+                  Investigation Console
+                </span>
 
-        {currentPage === "investigate" && (
-          <CaseInvestigation
-            currentCaseId={selectedCaseId}
-            onCaseChange={setSelectedCaseId}
-            onOpenGraph={(cId) => {
-              setSelectedCaseId(cId);
-              setCurrentPage("graph");
-            }}
-          />
-        )}
+                <h1>Fraud Investigation</h1>
 
-        {currentPage === "graph" && (
-          <GraphExplorer
-            caseId={selectedCaseId}
-            onCaseChange={setSelectedCaseId}
-          />
+                <p>
+                  Analyze suspicious transactions and investigate
+                  connected entities.
+                </p>
+              </div>
+            </div>
+
+            <div className="investigation-card">
+              <div className="investigation-icon">
+                <FileSearch size={24} />
+              </div>
+
+              <div>
+                <strong>Case {caseId}</strong>
+
+                <p>
+                  Investigation API is connected and ready.
+                </p>
+
+                <div className="status-row">
+                  <span className="status-dot" />
+                  Backend connected
+                </div>
+              </div>
+            </div>
+
+            <div className="info-item">
+              <AlertTriangle size={18} />
+
+              <div>
+                <strong>Development environment</strong>
+
+                <p>
+                  Investigation and graph data are currently
+                  backed by the local development graph client.
+                </p>
+              </div>
+            </div>
+          </section>
         )}
       </main>
     </div>
