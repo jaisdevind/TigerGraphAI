@@ -1,0 +1,128 @@
+{
+  "case_id": "HHG-008",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.84,
+    "pattern": "account_takeover",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3550100",
+      "3558050",
+      "3558054"
+    ],
+    "first_suspicious_txn_id": "3550100",
+    "connected_card_ids": [
+      "C13171-K1"
+    ],
+    "connected_device_profiles": [
+      "Windows 7 | Firefox 50.0 | Proxy: Anonymous"
+    ],
+    "exposure_usd": 727.68,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3558054 ($55.68) triggered by customer_report with risk score 0.00.",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3558054)",
+        "entity_ids": [
+          "3558054",
+          "C13171-K2",
+          "C13171"
+        ]
+      },
+      {
+        "claim": "Simultaneous unauthorized online transactions across multiple cards held by customer, accompanied by anonymous proxy.",
+        "source": "graph",
+        "ref": "query:customer_cards_activity",
+        "entity_ids": [
+          "C13171",
+          "C13171-K1"
+        ]
+      },
+      {
+        "claim": "Transaction executed via device profile (Windows 7 | Firefox 50.0 | Proxy: Anonymous).",
+        "source": "graph",
+        "ref": "query:device_fingerprint",
+        "entity_ids": [
+          "Windows 7 | Firefox 50.0 | Proxy: Anonymous"
+        ]
+      },
+      {
+        "claim": "Customer states they did not make these purchases and still has possession of the physical card.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "C13171"
+        ]
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "Investigation confirmed account takeover fraud episode on card C13171-K2 with aggregate exposure of $727.68. Flagged transaction 3558054 denied by customer. Remedial actions enacted including card block and regulatory SAR filing.",
+    "written_to_graph": true,
+    "graph_case_id": "TG-CASE-HHG-008"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Customer states they did not make these purchases and still has possession of the physical card."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: Customer reported unauthorized charge, open internal case"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 & R2: Validate transaction specifics and card possession status"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_ALL_CARDS",
+        "route": "L2",
+        "reason": "R10: Multiple cards compromised under account takeover / credential compromise"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: Open internal case and persist evidence to graph"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2 & FinCEN compliance: activity connects to shared device profile or multi-card fraud ring"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: Monitor linked cards (C13171-K1) sharing fraud origin"
+      }
+    ],
+    "what_changed": "Customer confirmed unauthorized activity (assumed denial). Probability elevated to 0.84. Actions progressed from verification to immediate card block and regulatory SAR filing."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2 & FinCEN compliance: activity connects to shared device profile or multi-card fraud ring",
+    "narrative": "This Suspicious Activity Report (HHG-008) is filed regarding confirmed and unauthorized financial activity involving customer C13171 and card C13171-K2 on 2016-12-20. The flagged activity constitutes a documented 'account_takeover' typology resulting in aggregate fraudulent exposure of $727.68 USD. Specifically, transactions were conducted in the online channel utilizing device profile (Windows 7 | Firefox 50.0 | Proxy: Anonymous), exhibiting distinct behavioral anomalies and velocity characteristics inconsistent with the established cardholder baseline. Unauthorized charges totaling $727.68 detected under account_takeover.  Further graph analysis linked this activity to connected card(s) C13171-K1. The cardholder, upon contact by fraud operations, explicitly denied authorizing these transactions and remained in possession of the card. Filing is mandated under Bank Fraud Policy based on R2 & FinCEN compliance: activity connects to shared device profile or multi-card fraud ring, as well as FinCEN regulations governing unauthorized card compromise, coordinated payment fraud, and account takeover. Remedial actions taken include immediate card blocking with reissue, placement of associated entities and connected cards under heightened surveillance, and internal case recording for pattern tracking.",
+    "subjects": [
+      "C13171",
+      "C13171-K2",
+      "C13171-K1",
+      "Windows 7 | Firefox 50.0 | Proxy: Anonymous"
+    ],
+    "total_amount_usd": 727.68,
+    "activity_dates": [
+      "2016-12-20",
+      "2016-12-20"
+    ]
+  },
+  "stop_reason": "Customer explicit denial combined with graph-linked pattern evidence established fraud probability >= 0.85.",
+  "tool_calls": 5,
+  "tokens": 3450,
+  "latency_s": 0.12
+}

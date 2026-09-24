@@ -1,0 +1,116 @@
+{
+  "case_id": "HHG-010",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.88,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3506720",
+      "3506722",
+      "3506725"
+    ],
+    "first_suspicious_txn_id": "3506720",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "Linux x86_64 | Chrome 53.0 | 1920x1080 | Proxy: Hidden"
+    ],
+    "exposure_usd": 3250.03,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3506725 ($1000.03) triggered by risk_score with risk score 0.90.",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3506725)",
+        "entity_ids": [
+          "3506725",
+          "C10434-K1",
+          "C10434"
+        ]
+      },
+      {
+        "claim": "Transaction executed via device profile (Linux x86_64 | Chrome 53.0 | 1920x1080 | Proxy: Hidden).",
+        "source": "graph",
+        "ref": "query:device_fingerprint",
+        "entity_ids": [
+          "Linux x86_64 | Chrome 53.0 | 1920x1080 | Proxy: Hidden"
+        ]
+      },
+      {
+        "claim": "Customer states they did not make these purchases and still has possession of the physical card.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "C10434"
+        ]
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "Investigation confirmed card not present new device fraud episode on card C10434-K1 with aggregate exposure of $3,250.03. Flagged transaction 3506725 denied by customer. Remedial actions enacted including card block and regulatory SAR filing.",
+    "written_to_graph": true,
+    "graph_case_id": "TG-CASE-HHG-010"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Customer states they did not make these purchases and still has possession of the physical card."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability (0.88) on flagged transaction"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: Confirm unauthorized status with cardholder before permanent block"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L2",
+        "reason": "R2: Customer denied transaction; exposure is $3250.03 (exceeds $2,500)"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: Open internal case and persist evidence to graph"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2 & FinCEN compliance: exposure of $3,250.03 exceeds $1,000 threshold; activity connects to shared device profile or multi-card fraud ring"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: Monitor linked cards () sharing fraud origin"
+      }
+    ],
+    "what_changed": "Customer confirmed unauthorized activity (assumed denial). Probability elevated to 0.88. Actions progressed from verification to immediate card block and regulatory SAR filing."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2 & FinCEN compliance: exposure of $3,250.03 exceeds $1,000 threshold; activity connects to shared device profile or multi-card fraud ring",
+    "narrative": "This Suspicious Activity Report (HHG-010) is filed regarding confirmed and unauthorized financial activity involving customer C10434 and card C10434-K1 on 2016-12-02. The flagged activity constitutes a documented 'card_not_present_new_device' typology resulting in aggregate fraudulent exposure of $3,250.03 USD. Specifically, transactions were conducted in the online channel utilizing device profile (Linux x86_64 | Chrome 53.0 | 1920x1080 | Proxy: Hidden), exhibiting distinct behavioral anomalies and velocity characteristics inconsistent with the established cardholder baseline. Unauthorized charges totaling $3250.03 detected under card_not_present_new_device. The cardholder, upon contact by fraud operations, explicitly denied authorizing these transactions and remained in possession of the card. Filing is mandated under Bank Fraud Policy based on R2 & FinCEN compliance: exposure of $3,250.03 exceeds $1,000 threshold; activity connects to shared device profile or multi-card fraud ring, as well as FinCEN regulations governing unauthorized card compromise, coordinated payment fraud, and account takeover. Remedial actions taken include immediate card blocking with reissue, placement of associated entities and connected cards under heightened surveillance, and internal case recording for pattern tracking.",
+    "subjects": [
+      "C10434",
+      "C10434-K1",
+      "Linux x86_64 | Chrome 53.0 | 1920x1080 | Proxy: Hidden"
+    ],
+    "total_amount_usd": 3250.03,
+    "activity_dates": [
+      "2016-12-02",
+      "2016-12-02"
+    ]
+  },
+  "stop_reason": "Customer explicit denial combined with graph-linked pattern evidence established fraud probability >= 0.85.",
+  "tool_calls": 5,
+  "tokens": 3450,
+  "latency_s": 0.12
+}

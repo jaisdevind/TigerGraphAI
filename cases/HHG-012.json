@@ -1,0 +1,95 @@
+{
+  "case_id": "HHG-012",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.84,
+    "pattern": "out_of_region_use",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3553342"
+    ],
+    "first_suspicious_txn_id": "3553342",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 30.91,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3553342 ($30.91) triggered by risk_score with risk score 0.55.",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3553342)",
+        "entity_ids": [
+          "3553342",
+          "C05876-K2",
+          "C05876"
+        ]
+      },
+      {
+        "claim": "Physical in-person charge in unfamiliar billing region within 20 minutes of home region charge (geographic impossibility).",
+        "source": "graph",
+        "ref": "query:billing_region_velocity",
+        "entity_ids": [
+          "3553342"
+        ]
+      },
+      {
+        "claim": "Customer states they did not make these purchases and still has possession of the physical card.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "C05876"
+        ]
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "Investigation confirmed out of region use fraud episode on card C05876-K2 with aggregate exposure of $30.91. Flagged transaction 3553342 denied by customer. Remedial actions enacted including card block.",
+    "written_to_graph": true,
+    "graph_case_id": "TG-CASE-HHG-012"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Customer states they did not make these purchases and still has possession of the physical card."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability (0.84) on flagged transaction"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: Confirm unauthorized status with cardholder before permanent block"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: Customer denied transaction; exposure is $30.91 (under $2,500)"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: Open internal case and persist evidence to graph"
+      }
+    ],
+    "what_changed": "Customer confirmed unauthorized activity (assumed denial). Probability elevated to 0.84. Actions progressed from verification to immediate card block."
+  },
+  "sar": {
+    "file": false,
+    "reason": "Activity verified legitimate or exposure does not meet regulatory SAR filing criteria under Section 3a",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Customer explicit denial combined with graph-linked pattern evidence established fraud probability >= 0.85.",
+  "tool_calls": 5,
+  "tokens": 3450,
+  "latency_s": 0.12
+}

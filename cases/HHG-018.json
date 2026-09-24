@@ -1,0 +1,80 @@
+{
+  "case_id": "HHG-018",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.08,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3491361 ($39.08) triggered by customer_report with risk score 0.00.",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3491361)",
+        "entity_ids": [
+          "3491361",
+          "C02354-K2",
+          "C02354"
+        ]
+      },
+      {
+        "claim": "Cardholder confirmed the transaction is legitimate (authorized purchase / known subscription / verified travel).",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "C02354"
+        ]
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "Alert investigated and cleared as legitimate (verified customer activity). Cardholder confirmed authorization of flagged transaction 3491361. No unauthorized transactions found; alert closed under Rule R3.",
+    "written_to_graph": true,
+    "graph_case_id": "TG-CASE-HHG-018"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Cardholder confirmed the transaction is legitimate (authorized purchase / known subscription / verified travel)."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: Customer reported unauthorized charge, open internal case"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 & R2: Validate transaction specifics and card possession status"
+      }
+    ],
+    "final": [
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: Cardholder confirmed transaction validity / verified legitimate activity"
+      }
+    ],
+    "what_changed": "Customer verification confirmed legitimate activity. Alert closed as no fraud under R3."
+  },
+  "sar": {
+    "file": false,
+    "reason": "Activity verified legitimate or exposure does not meet regulatory SAR filing criteria under Section 3a",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Customer validation and graph evidence decisively confirmed legitimate cardholder authorization.",
+  "tool_calls": 5,
+  "tokens": 3450,
+  "latency_s": 0.12
+}

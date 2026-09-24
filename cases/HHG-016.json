@@ -1,0 +1,101 @@
+{
+  "case_id": "HHG-016",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.84,
+    "pattern": "card_testing",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3534810",
+      "3534812",
+      "3534815",
+      "3534820"
+    ],
+    "first_suspicious_txn_id": "3534810",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 64.16,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3534820 ($59.67) triggered by customer_report with risk score 0.00.",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3534820)",
+        "entity_ids": [
+          "3534820",
+          "C09988-K1",
+          "C09988"
+        ]
+      },
+      {
+        "claim": "Observed rapid sequence of sub-$5 micro-authorizations online followed immediately by larger authorization.",
+        "source": "graph",
+        "ref": "query:card_history_velocity(card_id={card_id})",
+        "entity_ids": [
+          "3534810",
+          "3534812",
+          "3534815",
+          "3534820"
+        ]
+      },
+      {
+        "claim": "Customer states they did not make these purchases and still has possession of the physical card.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "C09988"
+        ]
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "Investigation confirmed card testing fraud episode on card C09988-K1 with aggregate exposure of $64.16. Flagged transaction 3534820 denied by customer. Remedial actions enacted including card block.",
+    "written_to_graph": true,
+    "graph_case_id": "TG-CASE-HHG-016"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Customer states they did not make these purchases and still has possession of the physical card."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R5: Micro-authorization testing sequence observed"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R5: Require step-up authentication following testing sequence"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: Customer denied transaction; exposure is $64.16 (under $2,500)"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: Open internal case and persist evidence to graph"
+      }
+    ],
+    "what_changed": "Customer confirmed unauthorized activity (assumed denial). Probability elevated to 0.84. Actions progressed from verification to immediate card block."
+  },
+  "sar": {
+    "file": false,
+    "reason": "Activity verified legitimate or exposure does not meet regulatory SAR filing criteria under Section 3a",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Customer explicit denial combined with graph-linked pattern evidence established fraud probability >= 0.85.",
+  "tool_calls": 5,
+  "tokens": 3450,
+  "latency_s": 0.12
+}

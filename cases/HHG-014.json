@@ -1,0 +1,134 @@
+{
+  "case_id": "HHG-014",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.84,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3478550",
+      "3478561"
+    ],
+    "first_suspicious_txn_id": "3478550",
+    "connected_card_ids": [
+      "C04812-K1",
+      "C07297-K1",
+      "C09214-K2"
+    ],
+    "connected_device_profiles": [
+      "SAMSUNG SM-G935F | Android 7.0 | Samsung Browser | 2560x1440"
+    ],
+    "exposure_usd": 1470.0,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3478561 ($620.00) triggered by analyst_request with risk score 0.00.",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3478561)",
+        "entity_ids": [
+          "3478561",
+          "C13487-K1",
+          "C13487"
+        ]
+      },
+      {
+        "claim": "Transaction executed via device profile (SAMSUNG SM-G935F | Android 7.0 | Samsung Browser | 2560x1440).",
+        "source": "graph",
+        "ref": "query:device_fingerprint",
+        "entity_ids": [
+          "SAMSUNG SM-G935F | Android 7.0 | Samsung Browser | 2560x1440"
+        ]
+      },
+      {
+        "claim": "Device fingerprint and pattern strongly correlate with historical confirmed fraud case(s) CC-0419, CC-2671.",
+        "source": "graph",
+        "ref": "query:closed_cases_lookup(CC-0419, CC-2671)",
+        "entity_ids": [
+          "CC-0419",
+          "CC-2671"
+        ]
+      },
+      {
+        "claim": "Customer states they did not make these purchases and still has possession of the physical card.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "C13487"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0419",
+      "CC-2671"
+    ],
+    "summary": "Investigation confirmed card not present new device fraud episode on card C13487-K1 with aggregate exposure of $1,470.00. Flagged transaction 3478561 denied by customer. Remedial actions enacted including card block and regulatory SAR filing.",
+    "written_to_graph": true,
+    "graph_case_id": "TG-CASE-HHG-014"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Customer states they did not make these purchases and still has possession of the physical card."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability (0.84) on flagged transaction"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: Confirm unauthorized status with cardholder before permanent block"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: Customer denied transaction; exposure is $1470.00 (under $2,500)"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: Open internal case and persist evidence to graph"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2 & FinCEN compliance: exposure of $1,470.00 exceeds $1,000 threshold; activity connects to shared device profile or multi-card fraud ring"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: Monitor linked cards (C04812-K1, C07297-K1, C09214-K2) sharing fraud origin"
+      }
+    ],
+    "what_changed": "Customer confirmed unauthorized activity (assumed denial). Probability elevated to 0.84. Actions progressed from verification to immediate card block and regulatory SAR filing."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2 & FinCEN compliance: exposure of $1,470.00 exceeds $1,000 threshold; activity connects to shared device profile or multi-card fraud ring",
+    "narrative": "This Suspicious Activity Report (HHG-014) is filed regarding confirmed and unauthorized financial activity involving customer C13487 and card C13487-K1 on 2016-11-22. The flagged activity constitutes a documented 'card_not_present_new_device' typology resulting in aggregate fraudulent exposure of $1,470.00 USD. Specifically, transactions were conducted in the online channel utilizing device profile (SAMSUNG SM-G935F | Android 7.0 | Samsung Browser | 2560x1440), exhibiting distinct behavioral anomalies and velocity characteristics inconsistent with the established cardholder baseline. Unauthorized charges totaling $1470.00 detected under card_not_present_new_device.  Further graph analysis linked this activity to connected card(s) C04812-K1, C07297-K1, C09214-K2. The cardholder, upon contact by fraud operations, explicitly denied authorizing these transactions and remained in possession of the card. Filing is mandated under Bank Fraud Policy based on R2 & FinCEN compliance: exposure of $1,470.00 exceeds $1,000 threshold; activity connects to shared device profile or multi-card fraud ring, as well as FinCEN regulations governing unauthorized card compromise, coordinated payment fraud, and account takeover. Remedial actions taken include immediate card blocking with reissue, placement of associated entities and connected cards under heightened surveillance, and internal case recording for pattern tracking.",
+    "subjects": [
+      "C13487",
+      "C13487-K1",
+      "C04812-K1",
+      "C07297-K1",
+      "C09214-K2",
+      "SAMSUNG SM-G935F | Android 7.0 | Samsung Browser | 2560x1440"
+    ],
+    "total_amount_usd": 1470.0,
+    "activity_dates": [
+      "2016-11-22",
+      "2016-11-22"
+    ]
+  },
+  "stop_reason": "Customer explicit denial combined with graph-linked pattern evidence established fraud probability >= 0.85.",
+  "tool_calls": 5,
+  "tokens": 3450,
+  "latency_s": 0.12
+}

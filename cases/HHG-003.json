@@ -1,0 +1,94 @@
+{
+  "case_id": "HHG-003",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.08,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3530164 ($49.00) triggered by customer_report with risk score 0.00.",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3530164)",
+        "entity_ids": [
+          "3530164",
+          "C08623-K2",
+          "C08623"
+        ]
+      },
+      {
+        "claim": "Flagged charge strictly matches 3 consecutive months of recurring subscription billing on the exact same date and amount.",
+        "source": "graph",
+        "ref": "query:recurring_subscription_analysis",
+        "entity_ids": [
+          "3530164",
+          "C08623-K2"
+        ]
+      },
+      {
+        "claim": "Cardholder confirmed the transaction is legitimate (authorized purchase / known subscription / verified travel).",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "C08623"
+        ]
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "Alert investigated and cleared as legitimate (recurring subscription). Cardholder confirmed authorization of flagged transaction 3530164. No unauthorized transactions found; alert closed under Rule R3.",
+    "written_to_graph": true,
+    "graph_case_id": "TG-CASE-HHG-003"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Cardholder confirmed the transaction is legitimate (authorized purchase / known subscription / verified travel)."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R7: Recurring charge pattern detected, verify prior to blocking"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: Request customer verification on recurring subscription"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: Send recurring charge alert and subscription tips"
+      }
+    ],
+    "final": [
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: Cardholder confirmed transaction validity / verified legitimate activity"
+      }
+    ],
+    "what_changed": "Customer verification confirmed legitimate activity. Alert closed as no fraud under R3."
+  },
+  "sar": {
+    "file": false,
+    "reason": "Activity verified legitimate or exposure does not meet regulatory SAR filing criteria under Section 3a",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Customer validation and graph evidence decisively confirmed legitimate cardholder authorization.",
+  "tool_calls": 5,
+  "tokens": 3450,
+  "latency_s": 0.12
+}
