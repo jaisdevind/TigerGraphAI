@@ -1,5 +1,19 @@
+import type { CaseSummaryItem, FullCaseAnswer } from "../types/case";
+
+export async function getCaseList(): Promise<CaseSummaryItem[]> {
+  const response = await api.get<CaseSummaryItem[]>("/api/cases");
+  return response.data;
+}
+
+
 import axios from "axios";
 
+export async function getCaseDetail(caseId: string): Promise<FullCaseAnswer> {
+  const response = await api.get<FullCaseAnswer>(`/api/cases/${caseId}`);
+  return response.data;
+}
+
+// Base URL for backend FastAPI server
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 export const api = axios.create({
@@ -128,5 +142,13 @@ export async function getCaseGraph(
     `/api/cases/${caseId}/graph`,
   );
 
+  return response.data;
+};
+
+// Trigger regeneration of all case investigations
+export async function generateAllCases(): Promise<{status: string; generated_cases: number}> {
+  const response = await api.post<{status: string; generated_cases: number}>(
+    "/api/cases/generate-all",
+  );
   return response.data;
 }
