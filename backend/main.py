@@ -1,4 +1,4 @@
-"""
+﻿"""
 TigerGraphAI Investigation API.
 FastAPI application serving:
 - Health check
@@ -87,7 +87,7 @@ def _load_case_pack() -> Dict[str, Dict[str, Any]]:
     return case_map
 
 
-@app.get("/health")
+@app.get("/api/health")
 def health() -> Dict[str, str]:
     return {
         "status": "ok",

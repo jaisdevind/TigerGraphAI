@@ -1,5 +1,6 @@
+# backend/vercel_api.py
 from mangum import Mangum
-from .main import app
+from .main import app  # <-- this imports the FastAPI app you already have
 
-# Export a handler that Vercel expects for Python serverless functions
+# Vercel will invoke this `handler`
 handler = Mangum(app)
