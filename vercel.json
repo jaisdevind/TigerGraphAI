@@ -1,3 +1,8 @@
+# From the project root
+cd C:\Users\devansh\test-app\TigerGraphAI
+
+# Overwrite vercel.json with the corrected content
+$fixed = @'
 {
   "version": 2,
   "builds": [
@@ -13,6 +18,10 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/backend/vercel_api.py" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
+'@
+
+Set-Content -Path "vercel.json" -Value $fixed -Encoding UTF8
