@@ -1,4 +1,5 @@
-﻿fastapi
-uvicorn[standard]
-mangum
+fastapi
+uvicorn
+mangum                # ASGI → Lambda adapter Vercel uses
 pydantic
+# If you use any other Python packages (e.g. typing-extensions) list them here
